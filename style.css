@@ -6,7 +6,7 @@ body{
     margin: 0 auto;
 }
 
-#datosM{
+#datosM,#datosP,#datosS{
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -51,4 +51,14 @@ p{
     font-family: 'Bebas Neue', cursive;
     font-size: 20PX;
     margin: 5PX;
+}
+
+form{
+    width: 500px;
+    margin: 30px auto;
+    padding: 15px;
+    background: black;
+    color: aliceblue;
+    border: 2px solid burlywood;
+    border-radius: 10px;
 }

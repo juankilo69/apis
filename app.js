@@ -2,7 +2,7 @@ let peticion = new XMLHttpRequest()
 let peticion2 = new XMLHttpRequest()                
 let urlM = "http://gateway.marvel.com/v1/public/creators/32/comics?ts=1000&apikey=fe2b6d8979489384544444da46b59af5&hash=77a33bf1cb7b74086ff8e2ea8cb4a72a"
 let urlP = "https://pokeapi.co/api/v2/pokemon"
-let urlS = ""
+let urlS = "https://rickandmortyapi.com/api/character"
 
 let change = document.getElementById("seleccionar")
 
@@ -51,38 +51,34 @@ document.querySelector("button").addEventListener("click",()=>{
         divS.style.display = "none"
 
         if(pintadoP != true){
+            
             peticion.open("GET", urlP,true)      
             peticion.send(null)
             peticion.onreadystatechange = function() {
                 if(this.readyState == 4 && this.status == 200){          
                     let datos = JSON.parse(this.responseText)           
                     console.log(datos.results);
-                    for(p of datos.results){                              
-                        let urlPokemon = []
-                        urlPokemon.push(p.url)
-                        console.log(urlPokemon);
-                        let habilidades
-                        let exp
-                        for(let u = 0; u<urlPokemon.length;u++){
-                            console.log("hola");
-                            peticion2.open("GET", urlPokemon[u],true)      
-                            peticion2.send(null)
-                            
-                            peticion2.onreadystatechange = function() {
-                                if(this.readyState == 4 && this.status == 200){         
-                                    let datos2 = []
-                                    datos2.push(this.responseText) 
-                                    
-                                    exp = datos2.height       
-                                }
-                                console.log("2222",exp);
+                    for (let i = 0; i < datos.results.length; i++) {
+                    
+                        peticion2.open('GET', datos.results[i].url);
+                        peticion2.onload = function() {
+                          if (peticion2.status === 200) {
+                            const data2 = JSON.parse(peticion2.responseText);
+                            console.log('Nombre: ' + data2.name);
+                            console.log('ID: ' + data2.id);
+                            console.log('Altura: ' + data2.height);
+                            console.log('Peso: ' + data2.weight);
+                            console.log('Habilidades: ');
+                            for (let j = 0; j < data2.abilities.length; j++) {
+                              console.log('- ' + data2.abilities[j].ability.name);
                             }
-                        }
-                        divP.innerHTML += `<div class="objeto">
-                            <p>${p.name}</p>
-                            <p>${exp}</p>
-                        </div>`
-                    }
+                          } else {
+                            console.error('Error en la petición');
+                          }
+                        };
+                        peticion2.send();
+                      }
+                    
                 }
             }
             pintadoP = true
@@ -93,28 +89,29 @@ document.querySelector("button").addEventListener("click",()=>{
     }else if(change.value == "starwars"){
         divM.style.display = "none"
         divP.style.display = "none"
+        if(pintadoS != true){
+            peticion.open("GET", urlS,true)      
+            peticion.send(null)
 
-        peticion.open("GET", urlS,true)      
-        peticion.send(null)
+            peticion.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200){          
+                    let datos = JSON.parse(this.responseText)           
+                    console.log(datos);
+                    for(let d = 0 ; d<datos.results.length;d++){                              
 
-        peticion.onreadystatechange = function() {
-            if(pintadoS != true){
-                peticion.onreadystatechange = function() {
-                    if(this.readyState == 4 && this.status == 200){          
-                        let datos = JSON.parse(this.responseText)           
-                        console.log(datos);
-                        for(let d of datos.data.results){                              
-    
-                            divP.innerHTML += `<div class="objeto">ºº  º
-                                <h1>Hola a todos S</h1>
-                            </div>`                                                                 
-                        }
+                        divS.innerHTML += `<div class="objeto">
+                            <h2>${datos.results[d].name}</h2>
+                            <img class="fotos" src="${datos.results[d].image}">
+                            <p> Estado :${datos.results[d].status} </p>
+                            <p>Especie: ${datos.results[d].species}</p>
+                            <p>Genero: ${datos.results[d].gender}</p>
+                        </div>`                                                                 
                     }
                 }
-                pintadoS = true
-            }else{
-                divS.style.display = "flex"
             }
+            pintadoS = true
+        }else{
+            divS.style.display = "flex"
         }
     }
 })
